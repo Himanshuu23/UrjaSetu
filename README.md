@@ -1,50 +1,99 @@
-# Welcome to your Expo app 👋
+# UrjaSetu
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A sustainability mobile app for image-based waste guidance, nearby collection vendors, Green Points, and solar and electricity calculators.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+Expo app → Express REST API → MongoDB
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The phone app already calls the hosted API, so scanning the Expo QR is enough to try it.
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
+## Architecture
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                        Mobile app                           │
+│  Expo • React Native • Expo Router                          │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                     REST API (Express)                      │
+│  Users • Vendors • Waste image • Solar • Electricity        │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                     Data and helpers                        │
+│  MongoDB • Imagga image tags • geocoding                    │
+└─────────────────────────────────────────────────────────────┘
+```
 
-## Join the community
+## Features
 
-Join our community of developers creating universal apps.
+- User and vendor sign up and login
+- Waste photo upload and disposal suggestion
+- Nearest vendor on the map
+- Green Points marketplace
+- Solar rooftop calculator
+- Electricity usage calculator
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Layout
+
+| Folder | What it is |
+|----------|----------|
+| client | Expo app |
+| server | Express API used on Vercel |
+
+## API
+
+Base URL used by the app: `https://backend-amber-nine-53.vercel.app`
+
+| Method | Path | Purpose |
+|----------|----------|----------|
+| POST | /api/user/register | Create a user |
+| POST | /api/user/login | Log in |
+| GET | /api/user/:email | Profile and Green Points |
+| POST | /api/user/increase | Add Green Points |
+| POST | /api/user/deduct | Spend Green Points |
+| POST | /api/vendor/register | Create a vendor |
+| POST | /api/vendor/login | Vendor login |
+| GET | /api/vendor/nearest-vendor | Closest vendor by coordinates |
+| POST | /api/analyze/suggestion | Waste image suggestion |
+| POST | /api/api/solarPotential | Solar estimate |
+| POST | /api/api/electricityUsage | Electricity estimate |
+
+## Install on a phone
+
+Install [Expo Go](https://expo.dev/go) on the phone. The computer and the phone need the same Wi-Fi.
+
+```bash
+cd client
+npm install
+npx expo start
+```
+
+The terminal prints a QR code. Scan it with Expo Go on Android, or the Camera app on iOS. That opens this project in Expo Go. The QR is only valid while that terminal is running.
+
+To show that QR on this page, screenshot it, save the image as `client/assets/images/expo-qr.png`, and add this line under this section:
+
+```md
+![Scan to open UrjaSetu in Expo Go](client/assets/images/expo-qr.png)
+```
+
+## Run the API locally
+
+The app does not need this step. It already uses the hosted API.
+
+```bash
+cd server
+npm install
+```
+
+Copy `.env.example` to `.env` and set `MONGO_URL`. Image analysis also needs `IMAGGA_API_KEY` and `IMAGGA_API_SECRET`.
+
+```bash
+npm start
+```
+
+The API listens on port 3000 unless `PORT` is set.
